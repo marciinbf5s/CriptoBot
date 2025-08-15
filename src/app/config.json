@@ -1,0 +1,25 @@
+{
+    "mainStrategy": "utBotAlerts",
+    "mainStrategyArgs": {},
+    "fallbackStrategy": "getMovingAverageTradeStrategy",
+    "fallbackStrategyArgs": {},
+    "fallbackActivated": true,
+    "acceptableLossPercentage": 15,
+    "stopLossPercentage": 15,
+    "candlePeriod": "Client.KLINE_INTERVAL_15MINUTE",
+    "timeToTrade": 15,
+    "delayAfterOrder": 15,
+    "stocks_traded_list": [
+        {
+            "stockCode": "ETH",
+            "operationCode": "ETHUSDT",
+            "tradedQuantity": 1
+        }
+    ],
+    "THREAD_LOCK": true,
+    "api": {
+        "apiKey": "",
+        "secretKey": ""
+    },
+    "running": false
+}

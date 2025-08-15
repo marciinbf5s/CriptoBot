@@ -1,0 +1,379 @@
+/* ===== MOBILE CSS PROFISSIONAL - MENU HAMBÚRGUER ===== */
+@media (max-width: 768px) {
+
+  /* Oculta sidebar padrão */
+  #sidebar {
+    display: none !important;
+  }
+
+  /* Botão hamburguer fixo no topo esquerdo */
+  .menu-hamburger-btn {
+    position: fixed;
+    top: 6px;
+    left: 4px;
+    z-index: 3001;
+    width: 44px;
+    height: 44px;
+    background: #181a1b;
+    border: none;
+    border-radius: 50%;
+    box-shadow: 0 2px 8px #1118;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: background 0.2s;
+  }
+  .menu-hamburger-btn:active,
+  .menu-hamburger-btn.open {
+    background: #222;
+  }
+  .menu-hamburger-icon {
+    width: 28px;
+    height: 28px;
+    display: block;
+    color: #00bfff;
+    font-size: 2rem;
+    pointer-events: none;
+  }
+  /* Editar */
+.edit-icon {
+    background-color: #00bfff22;
+    color: #00e0ff;
+    top: 12px;
+    right: 12px;
+    width: 36px;
+    height: 36px;
+    }
+    
+    .edit-icon:hover {
+    background-color: #00bfff66;
+    color: #ffffff;
+    transform: scale(1.05);
+    }
+    
+    /* Deletar */
+    .delete-icon {
+    background-color: #ff4c4cbb;
+    color: #ffffff;
+    bottom: 12px;
+    right: 12px;
+    margin-top: 20px;
+    width: 36px;
+    height: 36px;
+    }
+    
+    .delete-icon:hover {
+    background-color: #ff1a1a;
+    transform: scale(1.05);
+    }
+  
+
+  .table-responsive-mobile {
+    width: 100vw;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    padding-bottom: 8px;
+    margin-left: -10px;
+  }
+  .table-responsive-mobile table {
+    min-width: 420px;
+    width: max-content;
+    font-size: 0.95rem;
+  }
+  #config-rapida-container {
+    padding-top: 60px !important;
+  }
+
+  /* Overlay escuro para menu aberto */
+/* Overlay escuro para menu aberto */
+  .mobile-menu-overlay {
+    display: none;
+    position: fixed;
+    top: 0; left: 0; right: 0; bottom: 0;
+    background: rgba(0,0,0,0.65);
+    z-index: 2000;
+    transition: opacity 0.3s;
+  }
+  .mobile-menu-overlay.active {
+    display: block;
+    opacity: 1;
+  }
+
+  /* Sidebar como menu lateral animado */
+  #sidebar.mobile-menu {
+    display: flex !important;
+    flex-direction: column;
+    position: fixed;
+    top: 0; left: 0;
+    width: 78vw;
+    max-width: 320px;
+    height: 100vh;
+    background: #181a1b;
+    box-shadow: 4px 0 24px #000a;
+    z-index: 2100;
+    padding: 28px 18px 18px 18px;
+    transform: translateX(-100%);
+    transition: transform 0.33s cubic-bezier(.77,0,.18,1);
+    border-top-right-radius: 16px;
+    border-bottom-right-radius: 16px;
+    border-right: 2px solid #00bfff44;
+  }
+  #sidebar.mobile-menu.open {
+    transform: translateX(0);
+  }
+  #sidebar .text-center,
+  #sidebar h2 {
+    color: #00bfff;
+    font-size: 1.3rem;
+    margin-bottom: 1.2rem;
+    text-align: left;
+  }
+  #sidebar #botStatusLabel {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 1.05rem;
+    margin-bottom: 1.2rem;
+  }
+  #sidebar .nav.flex-column {
+    flex-direction: column;
+    gap: 0.5rem;
+  }
+  #sidebar .btn,
+  #sidebar .btn-outline-light,
+  #sidebar .btn-outline-danger {
+    width: 100%;
+    font-size: 1.08rem;
+    padding: 12px 10px;
+    border-radius: 8px;
+    margin-bottom: 6px;
+    text-align: left;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    background: #222;
+    color: #00bfff;
+    border: none;
+    box-shadow: 0 1px 4px #0002;
+    transition: background 0.2s, color 0.2s;
+  }
+  #sidebar .btn-outline-danger {
+    background: #c82333;
+    color: #fff;
+    margin-top: 18px;
+  }
+  #sidebar .btn:active,
+  #sidebar .btn:focus {
+    background: #181a1b;
+    color: #fff;
+  }
+  #sidebar a.btn {
+    text-decoration: none;
+  }
+
+  /* Conteúdo principal ocupa 100% da tela */
+  section, .container, main {
+    margin-left: 0 !important;
+    margin-top: 0 !important;
+    width: 100vw !important;
+    max-width: 100vw !important;
+    min-height: 100vh;
+    border-radius: 0;
+    box-shadow: none;
+    padding: 1.2rem 0.7rem 1.5rem 0.7rem;
+    background: #121212;
+  }
+  section h1, .container h1, main h1 {
+    font-size: 1.5rem;
+    color: #00bfff;
+    margin-bottom: 1.2rem;
+  }
+
+  /* Botões principais e formulários responsivos */
+  button, .btn, input[type="submit"], input[type="button"] {
+    font-size: 1.08rem;
+    padding: 12px 0;
+    border-radius: 8px;
+    width: 100%;
+    margin-bottom: 8px;
+    background: #00bfff;
+    color: #181a1b;
+    border: none;
+    font-weight: 600;
+    transition: background 0.2s, color 0.2s;
+  }
+  button:active, .btn:active {
+    background: #009ac1;
+    color: #fff;
+  }
+  input, select, textarea {
+    width: 100%;
+    font-size: 1.08rem;
+    padding: 10px;
+    background: #23272b;
+    color: #fff;
+    border: 1.5px solid #444;
+    border-radius: 6px;
+    margin-bottom: 10px;
+    box-sizing: border-box;
+  }
+
+  /* Modal e notificações adaptados */
+  /* Botões do modal: ambos texto branco, cancelar cinza escuro */
+.modal-footer button, .modal-header button, .modal-content button {
+  width: 100%;
+  margin: 10px 0 0 0;
+  padding: 15px 0;
+  border-radius: 12px;
+  font-size: 1.1rem;
+  background: #00bfff;
+  color: #fff;
+  border: none;
+  box-shadow: 0 1px 4px rgba(0,191,255,0.12);
+  transition: background 0.2s;
+}
+.modal-footer button.btn-cancelar, .modal-content button.btn-cancelar {
+  background: #444;
+  color: #fff;
+}
+
+.modal, .modal-content {
+    background: #23272b;
+    color: #fff;
+    border-radius: 12px;
+    padding: 10px;
+    width: 96vw;
+    left: 2vw;
+    top: 10vh;
+    position: fixed;
+    z-index: 3000;
+  }
+  .modal {
+    display: none;
+    align-items: center;
+    justify-content: center;
+    min-height: 100vh;
+    background: rgba(24,26,27,0.95);
+  }
+  .notification, #notification {
+    position: fixed;
+    bottom: 18px;
+    left: 5vw;
+    width: 50vw;
+    height: 10vh;
+    color: #fff;
+    border-radius: 6px;
+    padding: 12px;
+    z-index: 5000;
+    font-size: 1.08rem;
+    box-shadow: none;
+  }
+
+  /* Seção Conta - visualização aprimorada para mobile */
+  
+
+#conta h2, #conta h3, #conta h4 {
+  color: #00bfff;
+  margin-bottom: 12px;
+  font-size: 1.3rem;
+}
+#conta label {
+  color: #fff;
+  font-weight: 500;
+  margin-top: 12px;
+  margin-bottom: 2px;
+}
+#conta input, #conta textarea, #conta select {
+  background: #23272b;
+  color: #fff;
+  border: 1.5px solid #00bfff44;
+  border-radius: 8px;
+  margin-bottom: 10px;
+  font-size: 1.08rem;
+  padding: 10px;
+  width: 100%;
+}
+#conta .form-group {
+  margin-bottom: 14px;
+  
+}
+#conta .btn {
+  font-size: 1.08rem;
+  padding: 14px 0;
+  border-radius: 10px;
+  width: 100%;
+  margin-bottom: 8px;
+  font-weight: 600;
+}
+#conta .btn-teste-conexao {
+    background: #00bfff !important;
+    color: #fff !important;
+    border: none;
+}
+#conta .btn-teste-conexao:active {
+  background: #444946 !important;
+}
+#conta .btn-salvar-chaves {
+  background: #00bfff !important;
+  color: #fff !important;
+  border: none;
+}
+#conta .saldo-usdt, #conta .total-usdt {
+  color: #1ec773;
+  font-weight: 600;
+  margin: 10px 0 8px 0;
+}
+#conta table {
+  margin-top: 8px;
+  border-radius: 10px;
+  overflow: hidden;
+  background: #23272b;
+}
+#conta th, #conta td {
+  padding: 8px 6px;
+  font-size: 0.98rem;
+  text-align: left;
+  color: #fff;
+}
+#conta th {
+  background: #181e2a;
+  color: #00bfff;
+}
+
+/* Tabelas responsivas */
+  table {
+    width: 100%;
+    font-size: 1.02rem;
+    background: #23272b;
+    color: #fff;
+    border-radius: 6px;
+    overflow-x: auto;
+    /* display: block; Removido para evitar corte */
+  }
+  th, td {
+    padding: 8px 6px;
+    text-align: left;
+    border-bottom: 1px solid #222;
+  }
+
+  /* Ajuste para ícones FontAwesome */
+  i.fas, i.far, i.fa {
+    font-size: 1.2em;
+    margin-right: 5px;
+  }
+
+  /* Esconde elementos não essenciais para mobile */
+  .desktop-only, .navbar-desktop, .sidebar-desktop {
+    display: none !important;
+  }
+
+  /* Botão flutuante do menu sempre acima */
+  .menu-hamburger-btn {
+    box-shadow: 0 2px 8px #00bfff55;
+  }
+}
+
+
+/* ===== FIM MOBILE CSS PROFISSIONAL ===== */
+

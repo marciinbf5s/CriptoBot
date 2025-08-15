@@ -1,0 +1,319 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Visualizador de Criptos</title>
+  <style>
+    /* Estilo do tema dark */
+    body {
+      background-color: #121212;
+      color: #ffffff;
+      font-family: Arial, sans-serif;
+      margin: 0;
+      padding: 0;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      min-height: 100vh;
+      max-width: 120rem;
+    }
+
+    /* Container do gráfico */
+    .tradingview-widget-container {
+  position: relative;
+  width: calc(100% - 2.5rem); /* margem lateral de 40px ≈ 2.5rem */
+  max-width: 120rem;        /* 1900px ≈ 118.75rem */
+  margin: 0 auto 1.25rem auto; /* margem inferior 20px ≈ 1.25rem */
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  height: calc(100vh - 2.5rem); /* altura da viewport menos 40px (2.5rem) */
+}
+
+@media (max-width: 768px) {
+  html, body {
+    width: 100vw !important;
+    min-width: 100vw !important;
+    max-width: 100vw !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    overflow-x: hidden !important;
+    box-sizing: border-box !important;
+  }
+  .tradingview-widget-container {
+    margin-top: 52px !important;
+    width: 100vw !important;
+    max-width: 100vw !important;
+    min-width: 100vw !important;
+    margin-left: 0 !important;
+    margin-right: 0 !important;
+    padding: 0 !important;
+    border-radius: 0 !important;
+    box-shadow: none !important;
+  }
+  #tradingview-widget {
+    width: 100vw !important;
+    max-width: 100vw !important;
+    min-width: 100vw !important;
+    margin: 0 !important;
+    border-radius: 0 !important;
+    box-shadow: none !important;
+    padding: 0 !important;
+    background: transparent !important;
+    display: block;
+  }
+}
+ 
+.tradingview-widget { 
+  width: 100%;
+  height: 100%;
+  border-radius: 10px;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+}
+
+    /* Barra de pesquisa */
+    #symbol-input-container {
+      position: absolute;
+      top: 10px;
+      left: 10px;
+      right: 10px;
+      z-index: 10;
+      display: flex;
+      align-items: center;
+      background-color: transparent;
+      border-radius: 25px;
+      padding: 5px 15px;
+      cursor: move;
+      max-width: 600px;
+      margin: 0 auto;
+    }
+
+    #symbol-input {
+      flex: 1;
+      padding: 10px 15px;
+      font-size: 1rem;
+      border-radius: 25px;
+      border: 1px solid #444;
+      background-color: transparent;
+      color: #fff;
+      outline: none;
+      min-width: 0;
+      
+    }
+
+    #search-icon {
+      color: #888;
+      cursor: pointer;
+      margin-left: 10px;
+    }
+
+    #fix-button {
+      margin-left: 10px;
+      font-size: 0.8rem;
+      cursor: pointer;
+      color: #888;
+      background: transparent;
+      border: none;
+    }
+
+    #crypto-price {
+      font-size: 1.125rem;
+      margin-top: 10px;
+      color: #34b7f1;
+      font-weight: bold;
+      text-align: center;
+    }
+
+    /* Responsividade adicional */
+    @media (max-width: 768px) {
+      .tradingview-widget-container {
+        aspect-ratio: unset;
+        width: 100vw;
+        max-width: 100vw;
+        margin: 0;
+        padding: 0;
+        height: 100vh;
+      }
+      #tradingview-widget {
+        width: 98vw !important;
+        max-width: 98vw !important;
+        min-width: 0 !important;
+        margin: 0 auto !important;
+        display: block;
+      }
+      #symbol-input-container {
+        flex-direction: column;
+        position: static;
+        cursor: default;
+        align-items: center;
+        width: 100%;
+        padding: 10px 0 0 0;
+        justify-content: center;
+      }
+      .searchbar-mobile-wrapper {
+        position: relative;
+        width: 90vw;
+        max-width: 420px;
+        margin: 0 auto;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+      }
+      #symbol-input {
+        width: 100%;
+        margin-bottom: 0;
+        border-radius: 20px;
+        padding-right: 38px !important;
+        font-size: 1rem;
+        text-align: left;
+      }
+      #search-icon {
+        position: absolute;
+        right: 14px;
+        top: 50%;
+        transform: translateY(-50%);
+        color: #00bfff;
+        cursor: pointer;
+        font-size: 1.35rem;
+        margin: 0 !important;
+        align-self: auto !important;
+        pointer-events: auto;
+      }
+      #fix-button {
+        display: none !important;
+      }
+      /* Diminui valores do eixo y do gráfico TradingView */
+      .tradingview-widget-container .tradingview-widget .yaxis-2uH9j { font-size: 10px !important; }
+      .tradingview-widget-container .tradingview-widget .pane-legend-item-value-12G8q { font-size: 11px !important; }
+      .tradingview-widget-container .tradingview-widget .pane-legend-item-1Y3zN { font-size: 11px !important; }
+      .tradingview-widget-container .tradingview-widget .price-1rWq5 { font-size: 11px !important; }
+      .tradingview-widget-container .tradingview-widget span { font-size: 12px; }
+    }
+
+    @media (max-width: 400px) {
+      .tradingview-widget-container {
+        aspect-ratio: unset;
+        width: 100vw;
+        max-width: 100vw;
+        margin: 0;
+        padding: 0;
+      }
+      #symbol-input {
+        font-size: 0.9rem;
+        padding: 8px 10px;
+      }
+
+      #crypto-price {
+        font-size: 1rem;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="tradingview-widget-container">
+    <div id="symbol-input-container">
+      <div class="searchbar-mobile-wrapper">
+        <input type="text" id="symbol-input" placeholder="Digite o símbolo da cripto (ex: BTC)" />
+        <span id="search-icon">&#x1F50D;</span>
+      </div>
+      <button id="fix-button">🔒</button>
+    </div>
+    <div id="tradingview-widget" class="tradingview-widget"></div>
+  </div>
+
+  <div id="crypto-price"></div>
+
+  <script src="https://s3.tradingview.com/tv.js"></script>
+  <script>
+    let isFixed = false;
+    let isDragging = false;
+    let offsetX, offsetY;
+
+    function updateChart(symbol) {
+      if (window.widget) {
+        window.widget.remove();
+      }
+
+      window.widget = new TradingView.widget({
+        autosize: true,
+        symbol: "BINANCE:" + symbol + "USDT",
+        interval: "60",
+        timezone: "Etc/UTC",
+        theme: "dark",
+        style: "1",
+        locale: "en",
+        toolbar_bg: "#1a1a1a",
+        hide_top_toolbar: false,
+        container_id: "tradingview-widget"
+      });
+
+      setTimeout(() => {
+        const lastPrice = getLastPrice();
+        if (lastPrice) {
+          document.getElementById('crypto-price').textContent = `${symbol.toUpperCase()} Price: $${lastPrice}`;
+        }
+      }, 1000);
+    }
+
+    function getLastPrice() {
+      if (window.widget && window.widget.chart) {
+        const chart = window.widget.chart();
+        const price = chart.lastPrice();
+        return price ? price.toFixed(2) : null;
+      }
+      return null;
+    }
+
+    function search() {
+      const symbol = document.getElementById('symbol-input').value.trim();
+      if (symbol) updateChart(symbol);
+    }
+
+    function toggleFix() {
+      isFixed = !isFixed;
+      const btn = document.getElementById('fix-button');
+      btn.textContent = isFixed ? "🔓" : "🔒";
+      document.getElementById('symbol-input-container').style.cursor = isFixed ? "default" : "move";
+    }
+
+    function startDrag(e) {
+      if (isFixed) return;
+      isDragging = true;
+      const container = document.getElementById('symbol-input-container');
+      offsetX = e.clientX - container.offsetLeft;
+      offsetY = e.clientY - container.offsetTop;
+      document.addEventListener('mousemove', dragMove);
+      document.addEventListener('mouseup', stopDrag);
+    }
+
+    function dragMove(e) {
+      if (isDragging) {
+        const x = e.clientX - offsetX;
+        const y = e.clientY - offsetY;
+        const container = document.getElementById('symbol-input-container');
+        container.style.left = `${x}px`;
+        container.style.top = `${y}px`;
+      }
+    }
+
+    function stopDrag() {
+      isDragging = false;
+      document.removeEventListener('mousemove', dragMove);
+      document.removeEventListener('mouseup', stopDrag);
+    }
+
+    document.addEventListener("DOMContentLoaded", () => {
+      updateChart("BTC");
+
+      document.getElementById('symbol-input').addEventListener('keypress', (e) => {
+        if (e.key === 'Enter') search();
+      });
+
+      document.getElementById('search-icon').addEventListener('click', search);
+      document.getElementById('fix-button').addEventListener('click', toggleFix);
+      document.getElementById('symbol-input-container').addEventListener('mousedown', startDrag);
+    });
+  </script>
+</body>
+</html>

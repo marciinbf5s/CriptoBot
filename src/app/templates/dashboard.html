@@ -1,0 +1,420 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title> The Best Trader</title>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
+  <script src="https://unpkg.com/lightweight-charts/dist/lightweight-charts.standalone.production.js"></script>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet"/>
+  <script src="https://cdn.socket.io/4.0.1/socket.io.min.js"></script>
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/styles.css') }}">
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/mobile.css') }}">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"/>
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</head>
+<body class="container-fluid">
+  <button class="menu-hamburger-btn" id="menuHamburgerBtn" aria-label="Abrir menu">
+    <span class="menu-hamburger-icon"><i class="fas fa-bars"></i></span>
+  </button>
+  <div class="mobile-menu-overlay" id="mobileMenuOverlay"></div>  
+
+  <!-- Sidebar fixa -->
+  <aside id="sidebar" class="bg-dark text-white p-3 d-flex flex-column">
+    <div>
+      <h2 class="text-center mb-4"> The Best Trader</h2>
+      <!-- Label do status -->
+      <div id="botStatusLabel" style="display: flex; align-items: center; gap: 8px; font-weight: bold; margin-bottom: 1rem;">
+        <span id="statusCircle" style="
+          width: 12px; 
+          height: 12px; 
+          border-radius: 50%; 
+          background-color: red;
+          display: inline-block;
+        "></span>
+        <span id="statusText">Parado</span>
+      </div>
+      <nav class="nav flex-column mb-3">
+        <button class="btn btn-outline-light mb-2 text-start" onclick="selecionarSecao('home')" data-section="home">🏠 Início</button>
+        <button class="btn btn-outline-light mb-2 text-start" onclick="selecionarSecao('config-rapida')" data-section="config-rapida">⚙️ Configurações Rápidas</button>
+        <button class="btn btn-outline-light mb-2 text-start" onclick="selecionarSecao('conta')" data-section="conta">👤 Conta</button>
+        <a href="/ajuda" target="_blank" class="btn btn-outline-light mb-2 text-start">🆘 Ajuda</a>
+      </nav>
+    </div>
+    
+    <!-- Rede Neural Visual -->
+    <div class="neural-brain-panel mt-auto d-flex flex-column align-items-center justify-content-center w-100" style="padding: 1rem 0;">
+      <div style="width: 100%; height: 600px; position: relative; margin-bottom: 0.5rem;">
+        <canvas id="neuralBrainCanvas" style="display: block; width: 100%; height: 100%;"></canvas>
+      </div>
+      <div id="neuralStatusMessage">Inicializando sinapses neurais...</div>
+
+    </div>
+
+    
+    <button class="btn btn-outline-danger mt-3 text-start" onclick="window.location.href='/login'">
+      <i class="fas fa-sign-out-alt"></i> Sair
+    </button>
+  </aside>
+  
+  <!-- Configurações Rápidas -->
+<section id="config-rapida">
+  <div class="container" id="config-rapida-container">
+    <h2>Configurações Rápidas</h2>
+    <div class="d-flex justify-content-between align-items-center mb-4">
+      <p class="mb-0">Gerencie suas configurações de negociação</p>
+    </div>
+    <div id="quick-settings" class="d-flex flex-wrap gap-3">
+      <!-- Cards serão inseridos via JS -->
+    </div>
+    <div id="stocksContainer" style="display: none;"></div>
+  </div>
+</section>
+
+  <!-- Modal para editar/criar preset -->
+<div id="presetModal" class="modal-backdrop " >
+  <div class="modal-content">
+    <h2 id="modalTitle">Nova Predefinição</h2>
+    <form id="presetForm">
+      <div class="form-row">
+       
+        <label>
+          <strong>Nome da Predefinição:</strong>
+          <input type="text" id="presetName" required placeholder="Ex: Padrão 1"/>
+        </label>
+        <label>
+          <strong>Moeda:</strong>
+          <input type="text" id="stockCode" required placeholder="Ex: BTC"/>
+        </label>
+        <label>
+          <strong>Par:</strong>
+          <input type="text" id="operationCode" required placeholder="Ex: BTCUSDT"/>
+        </label>
+        <label class="tooltip-container">
+          <strong>Quantidade:</strong>
+          <input type="number" id="tradedQuantity" required placeholder="Ex: 20" 
+                 onfocus="showQuantityTooltip()" onblur="hideQuantityTooltip()"/>
+          <span class="tooltip-text" id="quantityTooltip">Valor mínimo de negociação: 5 USD Ex: XRP=U$D3,00,Qtd min. para negociação é 1.66</span>
+        </label>
+        <label>
+          <strong>Estratégia Principal:</strong>
+          <select id="mainStrategy" required>
+            <option value="getMovingAverageTradeStrategy">Média Móvel</option>
+            <option value="getVortexTradeStrategy">Vortex</option>
+            <option value="getShortTermEMAStrategy">EMA Microtrade</option>
+            <option value="utBotAlerts">UT BOTS</option>
+            <option value="getScalpingEMA_strategy">EMA-Scalping</option>
+            <option value="getMovingAverageRSIVolumeStrategy">Média movel+RSI+Volume</option>
+            <option value="getAdvancedTradeStrategy_v3">TON V3</option>
+            <option value="getMovingAverageAntecipationTradeStrategy">Antecipação de Média Móvel</option>
+            <option value="getRsiTradeStrategy">RSI</option>
+          </select>
+        </label>
+      </div>
+
+      <div class="form-row">
+        <label>
+          <strong>Ativar fallback:</strong>
+          <select id="fallbackActivated" required>
+            <option value="false">Não</option>
+            <option value="true">Sim</option>
+          </select>
+        </label>
+        <div id="fallbackStrategyContainer" class="fallback-field">
+          <label for="fallbackStrategy"><strong>Estratégia de Fallback:</strong></label>
+          <select id="fallbackStrategy" required>
+            <option value="getMovingAverageTradeStrategy">Média Móvel</option>
+            <option value="getVortexTradeStrategy">Vortex</option>
+            <option value="getShortTermEMAStrategy">EMA Microtrade</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="form-row">
+        <label>
+          <strong>Percentual de Perda Aceitável (%) :</strong>
+          <input type="number" id="acceptableLossPercentage" required placeholder="Ex: 3"/>
+        </label>
+        <label>
+          <strong>Percentual de Stop Loss (%) :</strong>
+          <input type="number" id="stopLossPercentage" required placeholder="Ex: 4"/>
+        </label>
+      </div>
+
+      <div class="form-row">
+        <label>
+          <strong>Período de Candle:</strong>
+          <select id="candlePeriod" required>
+            <option value="Client.KLINE_INTERVAL_1MINUTE">1min</option>
+            <option value="Client.KLINE_INTERVAL_3MINUTE">3min</option>
+            <option value="Client.KLINE_INTERVAL_5MINUTE">5min</option>
+            <option value="Client.KLINE_INTERVAL_15MINUTE">15min</option>
+            <option value="Client.KLINE_INTERVAL_1HOUR">1h</option>
+            <option value="Client.KLINE_INTERVAL_4HOUR">4h</option>
+            <option value="Client.KLINE_INTERVAL_1DAY">1d</option>
+            <option value="Client.KLINE_INTERVAL_1WEEK">1w</option>
+            <option value="Client.KLINE_INTERVAL_1MONTH">1m</option>
+          </select>
+        </label>
+        <label>
+          <strong>Tempo entre trades(segundos):</strong>
+          <input type="number" id="timeToTrade" required placeholder="Ex: 30"/>
+        </label>
+      </div>
+
+      <div class="form-row">
+        <label>
+          <strong>Delay entre ordens(segundos):</strong>
+          <input type="number" id="delayAfterOrder" required placeholder="Ex: 60"/>
+        </label>
+      </div>
+
+      <div class="button-row">
+        <button id="btnSalvarPreset" type="submit" class="btn btn-primary mt-3">Salvar</button>
+        <button id="btnCancelarPreset" type="button" class="btn btn-secondary mt-3" onclick="fecharModal()">Cancelar</button>            
+      </div>
+    </form>
+  </div>
+</div>
+
+<!-- Modal de Confirmação para Preset -->
+<div id="confirmationModal" class="modal">
+  <div class="modal-content-confirmation">
+    <h3>Confirmar Seleção</h3>
+    <p>Você deseja aplicar este preset?</p>
+    <div class="modal-buttons">
+      <button id="confirmBtn">Sim</button>
+      <button id="cancelBtn">Cancelar</button>
+    </div>
+  </div>
+</div>
+
+<!-- Modal de Confirmação para Parar o Bot -->
+<div id="stopBotConfirmationModal" class="modal">
+  <div class="modal-content-confirmation">
+    <h3>Confirmar Parada do Bot</h3>
+    <p>Você tem certeza que deseja parar o bot de trading?</p>
+    <div class="modal-buttons">
+      <button id="confirmStopBtn">Sim, Parar Bot</button>
+      <button id="cancelStopBtn">Cancelar</button>
+    </div>
+  </div>
+</div>
+
+ <!-- Seção HOME -->
+ <section id="home" class="ativo">
+  <div class="crypto-chart-container">
+    <!-- Altere a URL para chamar a rota '/chart' -->
+    <iframe src="{{ url_for('routes.chart') }}" width="100%" style="border: none; height: 80vh; min-height: 400px; max-height: 800px;"></iframe>
+    <div class="bot-buttons">
+      <button type="button" id="btn-start-bot">▶️ Iniciar Bot</button>
+      <button type="button" id="btn-stop-bot">⛔ Parar Bot</button>
+    </div>
+  </div>
+</section>
+
+  <!-- Seção CONTA -->
+  <section id="conta" class="ativo">
+    <main>
+      <h1>👤 Conta</h1>
+      <p>Configuração da conta Binance</p>
+      <p>Insira suas chaves da API Binance para ativar a conexão com sua conta.</p>
+      <form id="api-keys-form" autocomplete="off" style="max-width: 500px; margin-bottom: 2rem;">
+        <div class="mb-3">
+          <label for="apiKey" class="form-label">API Key</label>
+          <input
+            type="text"
+            class="form-control"
+            id="apiKey"
+            name="apiKey"
+            placeholder="Sua API Key Binance"
+          />
+        </div>
+        <div class="mb-3">
+          <label for="secretKey" class="form-label">Secret Key</label>
+          <input
+            type="password"
+            class="form-control"
+            id="secretKey"
+            name="secretKey"
+            autocomplete="current-password"
+            placeholder="Sua Secret Key Binance"
+          />
+        </div>
+        <div class="d-flex gap-3">
+          <button type="button" id="btn-salvar-chaves" class="btn btn-primary">💾 Salvar Chaves</button>
+          <button type="button" id="btn-testar-conexao" class="btn btn-success">🔍 Testar Conexão</button>
+        </div>
+      </form>
+
+      <div id="resultado-teste" style="font-weight: 700; margin-top: 1rem;"></div>
+      <div id="saldo-conta" style="margin-top: 2rem; font-weight: 700; color: #00bfff;"></div>
+    <div class="table-responsive-mobile">
+      <table class="table table-dark table-striped table-hover mt-3">
+        <thead>
+          <tr>
+            <th>Ativo</th>
+            <th>Disponível</th>
+            <th>Em uso</th>
+            <th>Total</th>
+            <th>Valor em USDT</th>
+          </tr>
+        </thead>
+        <tbody id="saldoTabela">
+        </tbody>
+      </table>
+    </div>   
+    </main>
+  </section>
+  <div id="notification" role="alert" aria-live="assertive" aria-atomic="true" style="position: fixed; top: 20px; right: 20px; z-index: 1000; width: 300px;"></div>
+
+
+<style>
+  /* Estilo para o container do tooltip */
+  .tooltip-container {
+    position: relative;
+    display: inline-block;
+    width: 100%;
+  }
+
+  /* Estilo para o texto do tooltip */
+  .tooltip-text {
+    visibility: hidden;
+    width: 200px;
+    background-color: #333;
+    color: #fff;
+    text-align: center;
+    border-radius: 4px;
+    padding: 8px;
+    position: absolute;
+    z-index: 1;
+    bottom: 125%; /* Posiciona acima do input */
+    left: 50%;
+    transform: translateX(-50%);
+    opacity: 0;
+    transition: opacity 0.3s;
+    font-size: 14px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
+  }
+
+  /* Seta do tooltip */
+  .tooltip-text::after {
+    content: "";
+    position: absolute;
+    top: 100%;
+    left: 50%;
+    margin-left: -5px;
+    border-width: 5px;
+    border-style: solid;
+    border-color: #333 transparent transparent transparent;
+  }
+
+  /* Mostrar tooltip quando o input está em foco */
+  .tooltip-container input:focus + .tooltip-text {
+    visibility: visible;
+    opacity: 1;
+  }
+</style>
+
+<script>
+  // Função para mostrar o tooltip
+  function showQuantityTooltip() {
+    const tooltip = document.getElementById('quantityTooltip');
+    if (tooltip) {
+      tooltip.style.visibility = 'visible';
+      tooltip.style.opacity = '1';
+    }
+  }
+
+  // Função para esconder o tooltip
+  function hideQuantityTooltip() {
+    const tooltip = document.getElementById('quantityTooltip');
+    if (tooltip) {
+      tooltip.style.visibility = 'hidden';
+      tooltip.style.opacity = '0';
+    }
+  }
+</script>
+
+<script src="{{ url_for('static', filename='js/script.js') }}"></script>
+<script src="{{ url_for('static', filename='js/bot_decision_log.js') }}"></script>
+<script src="{{ url_for('static', filename='js/scriptmobile.js') }}"></script>
+
+<script>
+  // Função para manter a aplicação ativa no Render
+  function keepAlive() {
+    // URL para uma rota que não exige autenticação
+    const pingUrl = '{{ url_for("routes.ping") }}';
+    
+    // Tempo de intervalo em milissegundos (2 minutos e 30 segundos = 150000 ms)
+    // O Render considera inatividade após 5 minutos, então 2:30 é seguro e eficiente
+    const PING_INTERVAL = 150000;
+    
+    // Contador de pings para monitoramento
+    let pingCount = 0;
+    
+    // Função para fazer a requisição
+    const pingServer = async () => {
+      try {
+        const timestamp = new Date().toISOString();
+        const response = await fetch(`${pingUrl}?_=${Date.now()}`, {  // Adiciona timestamp para evitar cache
+          method: 'GET',
+          headers: {
+            'Cache-Control': 'no-cache, no-store, must-revalidate',
+            'Pragma': 'no-cache',
+            'Expires': '0'
+          },
+          // Timeout de 10 segundos para a requisição
+          signal: AbortSignal.timeout(10000)
+        });
+        
+        pingCount++;
+        if (response.ok) {
+          const data = await response.json();
+          console.log(`[${timestamp}] Ping #${pingCount} enviado com sucesso.`, data);
+        } else {
+          console.warn(`[${timestamp}] Falha ao enviar ping #${pingCount}:`, response.status);
+        }
+      } catch (error) {
+        console.error(`[${new Date().toISOString()}] Erro ao enviar ping #${pingCount}:`, error);
+        
+        // Tenta novamente em 30 segundos em caso de erro
+        if (error.name === 'AbortError' || error.name === 'TypeError') {
+          console.log('Tentando novamente em 30 segundos...');
+          setTimeout(pingServer, 30000);
+        }
+      }
+    };
+    
+    // Enviar imediatamente ao carregar a página
+    console.log('Iniciando serviço de keep-alive...');
+    pingServer();
+    
+    // Configurar o intervalo para enviar a cada 2 minutos e 30 segundos
+    const intervalId = setInterval(pingServer, PING_INTERVAL);
+    
+    // Limpar intervalo quando a aba/navegador for fechado
+    window.addEventListener('beforeunload', () => {
+      clearInterval(intervalId);
+      console.log('Serviço de keep-alive encerrado');
+    });
+    
+    // Lidar com o evento de visibilidade da página
+    document.addEventListener('visibilitychange', () => {
+      if (document.visibilityState === 'visible') {
+        // Se a aba voltar a ficar visível, enviar um ping imediatamente
+        pingServer();
+      }
+    });
+  }
+  
+  // Iniciar o keep-alive quando o documento estiver pronto
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', keepAlive);
+  } else {
+    keepAlive();
+  }
+</script>
+
+</body>
+</html>
