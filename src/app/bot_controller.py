@@ -6,7 +6,7 @@ import json
 import logging
 from binance.client import Client
 
-# Adiciona src ao sys.path para importar Models, modules, strategies
+
 SRC_PATH = os.path.abspath(os.path.join(os.path.dirname(__file__), ".."))
 if SRC_PATH not in sys.path:
     sys.path.append(SRC_PATH)
@@ -18,42 +18,33 @@ from ..strategies.vortex_strategy import getVortexTradeStrategy
 from ..strategies.ema_microtrade import getShortTermEMAStrategy
 
 
-
-# Configurações, logging e setup conforme seu código
-
 logging.basicConfig(
     filename="logs/trading_bot.log",
     level=logging.INFO,
     format="%(asctime)s - %(levelname)s - %(message)s",
 )
 
-# Get the absolute path to the config file
-
-# Caminho absoluto do arquivo config.json
 config_path = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), 'app', 'config.json')
 
 try:
     with open(config_path, "r", encoding="utf-8") as f:
         config_data = f.read()
-        print("Conteúdo do JSON:", config_data)  # Debug para ver o que tem no arquivo
+        print("Conteúdo do JSON:", config_data) 
         config = json.loads(config_data)
 except json.JSONDecodeError as e:
     print(f"Erro ao decodificar JSON no arquivo {config_path}: {e}")
-    config = None  # Ou defina algum valor padrão/ação para erro
+    config = None  
 except Exception as e:
     print(f"Erro ao abrir arquivo de configuração {config_path}: {e}")
     config = None
 
 strategies = {
-    "getMovingAverageAntecipationTradeStrategy": getMovingAverageAntecipationTradeStrategy,
     "getMovingAverageTradeStrategy": getMovingAverageTradeStrategy,
     "getVortexTradeStrategy": getVortexTradeStrategy,
     "getShortTermEMAStrategy": getShortTermEMAStrategy,
     "utBotAlerts":utBotAlerts,
     "getScalpingEMA_strategy": getScalpingEMA_strategy,
-    "getRsiTradeStrategy": getRsiTradeStrategy,
-    "getMovingAverageRSIVolumeStrategy": getMovingAverageRSIVolumeStrategy,
-    "getAdvancedTradeStrategy_v3": getAdvancedTradeStrategy_v3,
+
 }
 
 mainStrategy = strategies[config["mainStrategy"]]
@@ -116,10 +107,10 @@ def trader_loop(stockStart: StockStartModel):
         logging.error(error_msg)
         print(f"\n❌ {error_msg}")
         
-        # Retorna o status de erro para ser capturado pelas rotas
+      
         return {"status": "error", "message": error_msg}
         
-        # Encerra a thread em caso de erro de autenticação
+       
         if "chave de API" in error_msg.lower() or "permissão" in error_msg.lower():
             return
 
@@ -130,8 +121,8 @@ def trader_loop(stockStart: StockStartModel):
         else:
             MaTrader.execute()
     
-    # Garantir que time_to_sleep seja um número antes de passar para time.sleep()
-        time_to_sleep = float(MaTrader.time_to_sleep)  # ou int(MaTrader.time_to_sleep), dependendo do valor esperado
+
+        time_to_sleep = float(MaTrader.time_to_sleep) 
         time.sleep(time_to_sleep)
 
 
@@ -140,7 +131,7 @@ def trader_loop(stockStart: StockStartModel):
 def start_bot():
     global running, threads
     if running:
-        return False  # Já está rodando
+        return False 
     running = True
     threads = []
     for asset in stocks_traded_list:
@@ -156,4 +147,5 @@ def stop_bot():
         return False
     running = False
     return True
+
 
